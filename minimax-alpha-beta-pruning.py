@@ -22,27 +22,32 @@ def calculate_utility(gene_sequence, target_sequence, weights):
 
     return utility
 
+
 class GeneSequenceGame:
     def __init__(self, pool, target, weights):
         self.pool = pool
         self.target = target
         self.weights = weights
 
-    def alpha_beta(self, sequence, pool, maximing, alpha, beta):
+    def alpha_beta(self, sequence, pool, maximizing, alpha, beta):
         if len(pool) == 0:
             return calculate_utility(sequence, self.target, self.weights), sequence
         
-        if maximing == True:
-            max_eval = float('inf')
+        if maximizing:
+            max_eval = float('-inf')
             best_sequence = None
             for i in range(len(pool)):
                 nucleotide = pool[i]
                 new_sequence = sequence + nucleotide
                 new_pool = pool[:i] + pool[i+1:]
-                eval_score = self.alpha_beta(new_sequence, new_pool, False, alpha, beta)[0]
+                eval_score, _ = self.alpha_beta(new_sequence, new_pool, False, alpha, beta)
+
+                if eval_score > max_eval:
+                    max_eval = eval_score
+                    best_sequence = new_sequence
 
                 alpha = max(alpha, max_eval)
-                if eval_score > max_eval:
+                if alpha >= beta:
                     break
             return max_eval, best_sequence
         
@@ -63,4 +68,3 @@ class GeneSequenceGame:
                 if beta <= alpha:
                     break
             return min_eval, best_sequence
-
