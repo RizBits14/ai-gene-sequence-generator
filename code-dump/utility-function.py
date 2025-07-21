@@ -21,3 +21,11 @@ def calculate_utility(gene_sequence, target_sequence, weights):
         utility -= weight * abs(gene_character - target_character)
 
     return utility
+
+
+gene = "ATCG"
+target = "ATGC"
+weights = [4, 0, 5, 2]
+
+utility_score = calculate_utility(gene, target, weights)
+print(f"Utility Score: {utility_score}")
