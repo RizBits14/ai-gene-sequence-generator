@@ -96,7 +96,6 @@ class GeneSequence:
 
 ##################### Task - 2 #####################
 
-
 class UtilityBoosterCalc:
     def __init__(self, target_sequence, weights, booster_idx = None, mul = 1.0):
         self.target_sequence = target_sequence
