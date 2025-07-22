@@ -12,7 +12,6 @@ class UtilityCalculatorWithBooster:
         for i in range(max_len):
             gene_char = ord(gene_sequence[i]) if i < len(gene_sequence) else 0
             target_char = ord(self.target_sequence[i]) if i < len(self.target_sequence) else 0
-
             weight = self.weights[i] if i < len(self.weights) else 1
 
             if self.booster_index is not None and i >= self.booster_index:
@@ -25,7 +24,7 @@ class UtilityCalculatorWithBooster:
 
 class AlphaBetaSolverWithBooster:
     def __init__(self, pool, utility_calculator, enable_booster=False):
-        self.initial_pool = pool
+        self.initial_pool = sorted(pool)  # ✅ Sort ensures deterministic sequence
         self.utility_calculator = utility_calculator
         self.enable_booster = enable_booster
 
@@ -51,7 +50,6 @@ class AlphaBetaSolverWithBooster:
                 new_sequence = sequence + nucleotide
                 new_pool = pool[:i] + pool[i + 1:]
 
-                # Booster activates only when Agent 1 picks 'S'
                 activated = booster_activated
                 if self.enable_booster and nucleotide == "S":
                     activated = True
@@ -68,6 +66,7 @@ class AlphaBetaSolverWithBooster:
                 if alpha >= beta:
                     break
             return max_eval, best_sequence
+
         else:
             min_eval = float('inf')
             best_sequence = None
@@ -76,7 +75,6 @@ class AlphaBetaSolverWithBooster:
                 new_sequence = sequence + nucleotide
                 new_pool = pool[:i] + pool[i + 1:]
 
-                # Minimizer does not activate booster
                 eval_score, candidate_sequence = self._alpha_beta(
                     new_sequence, new_pool, True, alpha, beta, depth + 1, booster_activated
                 )
@@ -100,24 +98,22 @@ class GeneSequenceWithBooster:
         self.booster_multiplier = round((student_id_digits[0] * 10 + student_id_digits[1]) / 100, 2)
 
     def run(self):
-        # Run without booster (remove S)
         pool_without_s = [x for x in self.pool if x != "S"]
         calc_normal = UtilityCalculatorWithBooster(self.target, self.weights)
         solver_normal = AlphaBetaSolverWithBooster(pool_without_s, calc_normal)
         score_normal, sequence_normal = solver_normal.solve()
 
-        print("Without special nucleotide")
+        print("Without special nucleotide:")
         print(f"Best gene sequence generated: {sequence_normal}")
         print(f"Utility score: {score_normal}")
         print()
 
-        # Run with booster logic (if S exists)
         if "S" in self.pool:
             calc_booster = UtilityCalculatorWithBooster(self.target, self.weights, multiplier=self.booster_multiplier)
             solver_booster = AlphaBetaSolverWithBooster(self.pool, calc_booster, enable_booster=True)
             score_booster, sequence_booster = solver_booster.solve()
 
-            print("With special nucleotide")
+            print("With special nucleotide:")
             print(f"Best gene sequence generated: {sequence_booster}")
             print(f"Utility score: {score_booster}")
             print()
@@ -129,10 +125,6 @@ class GeneSequenceWithBooster:
         else:
             print("Special nucleotide 'S' not found in pool.")
 
-
-# ------------------------
-# ✅ Sample Input for Testing
-# ------------------------
 nucleotide_pool = ["S", "A", "T", "G", "C"]
 target_sequence = "GCAT"
 student_id_digits = [2, 3, 1, 8, 8, 8, 1, 1]
