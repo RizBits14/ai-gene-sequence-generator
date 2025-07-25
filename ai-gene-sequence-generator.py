@@ -1,4 +1,4 @@
-##################### Task - 1 #####################
+##################### Without Booster #####################
 
 class UtilityCalculator:
     def __init__(self, target_sequence, weights):
@@ -90,7 +90,7 @@ class GeneSequence:
         print(f"Utility score: {utility_score}")
         
 
-# Sample Input for Task - 1
+# Sample Input W/O Booster
 # pool = ["A", "T", "C", "G"]
 # target = "GCAT"
 # weights = [2, 3, 1, 8, 8, 8, 1, 1]
@@ -98,7 +98,7 @@ class GeneSequence:
 # game.run()
 
 
-##################### Task - 2 #####################
+##################### With Booster "S" #####################
 class UtilityWithBooster:
     def __init__(self, target_sequence, weights, booster_index = None, multiplier = 1.0):
         self.target_sequence = target_sequence
@@ -216,6 +216,7 @@ class GeneBoosterRunner:
         else:
             print("Special nucleotide 'S' not found in pool.")
 
+#Sample Input W Booster
 nucleotide_pool = ["S", "A", "T", "G", "C"]
 target_sequence = "GCAT"
 student_id_digits = [2, 3, 1, 8, 8, 8, 1, 1]
